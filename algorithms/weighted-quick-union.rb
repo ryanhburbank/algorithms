@@ -1,8 +1,9 @@
 class QuickUnion
-  attr_accessor :object_ids
+  attr_accessor :object_ids, :size
 
   def initialize(int)
    @object_ids = (0..int).to_a 
+   @size       = [1] * (int + 1)
   end
 
   def connected?(object1, object2)
@@ -12,12 +13,20 @@ class QuickUnion
   def union(object1, object2)
    i  = root(object1)
    j  = root(object2)
-   object_ids[i] = j 
+   return if i == j
+   if (size[i] < size[j])
+    object_ids[i] = j
+    size[j] += size[i]
+   else
+    object_ids[j] = i
+    size[i] += size[j]
+   end
   end
 
   private
   def root(i)
    while(i != object_ids[i])
+    object_ids[i] = object_ids[object_ids[i]]
     i = object_ids[i]
    end
    return i
